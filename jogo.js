@@ -1,5 +1,8 @@
 console.log("[Candinho Jr] Flappy Bird");
 
+const som_HIT = new Audio();
+som_HIT.src = "./efeitos/hit.wav";
+
 const sprites = new Image();
 sprites.src = "./sprites.png";
 
@@ -77,33 +80,53 @@ const planoDeFundo = {
   },
 };
 
-const flappyBird = {
-  sX: 0,
-  sY: 0,
-  w: 33,
-  h: 24,
-  x: 10,
-  y: 50,
-  gravidade: 0.25,
-  velocidade: 0,
-  atualiza() {
-    flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
-    flappyBird.y = flappyBird.y + flappyBird.velocidade;
-  },
-  desenha() {
-    contexto.drawImage(
-      sprites,
-      flappyBird.sX,
-      flappyBird.sY,
-      flappyBird.w,
-      flappyBird.h,
-      flappyBird.x,
-      flappyBird.y,
-      flappyBird.w,
-      flappyBird.h
-    );
-  },
-};
+function fazColisao(flappyBird, chao) {
+  const flappyBirdY = flappyBird.y + flappyBird.h;
+  const chaoY = chao.y;
+
+  if (flappyBirdY >= chaoY) return true;
+  else return false;
+}
+function criaFlappyBird() {
+  const flappyBird = {
+    sX: 0,
+    sY: 0,
+    w: 33,
+    h: 24,
+    x: 10,
+    y: 50,
+    pulo: 4.6,
+    gravidade: 0.25,
+    velocidade: 0,
+    pula() {
+      flappyBird.velocidade = -flappyBird.pulo;
+    },
+    atualiza() {
+      if (fazColisao(flappyBird, chao)) {
+        // setTimeout(() => som_HIT.play(), 500);
+        som_HIT.play();
+        mudaParaTela(Telas.INICIO);
+        return;
+      }
+      flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
+      flappyBird.y = flappyBird.y + flappyBird.velocidade;
+    },
+    desenha() {
+      contexto.drawImage(
+        sprites,
+        flappyBird.sX,
+        flappyBird.sY,
+        flappyBird.w,
+        flappyBird.h,
+        flappyBird.x,
+        flappyBird.y,
+        flappyBird.w,
+        flappyBird.h
+      );
+    },
+  };
+  return flappyBird;
+}
 
 const mensagemGetReady = {
   sX: 134,
@@ -127,17 +150,26 @@ const mensagemGetReady = {
   },
 };
 
+/**
+ * TELAS
+ */
+const globais = {};
 let telaAtiva = {};
 function mudaParaTela(novaTela) {
   telaAtiva = novaTela;
+
+  novaTela.inicializa && telaAtiva.inicializa();
 }
 
 const Telas = {
   INICIO: {
+    inicializa() {
+      globais.flappyBird = criaFlappyBird();
+    },
     desenha() {
       planoDeFundo.desenha();
       chao.desenha();
-      flappyBird.desenha();
+      globais.flappyBird.desenha();
       mensagemGetReady.desenha();
     },
     click() {
@@ -151,10 +183,13 @@ Telas.JOGO = {
   desenha() {
     planoDeFundo.desenha();
     chao.desenha();
-    flappyBird.desenha();
+    globais.flappyBird.desenha();
+  },
+  click() {
+    globais.flappyBird.pula();
   },
   atualiza() {
-    flappyBird.atualiza();
+    globais.flappyBird.atualiza();
   },
 };
 
