@@ -3,8 +3,12 @@ console.log("[Candinho Jr] Flappy Bird");
 let frames = 0;
 const som_HIT = new Audio();
 const som_CAIU = new Audio();
+const som_PONTO = new Audio();
+const som_PULO = new Audio();
 som_HIT.src = "./efeitos/hit.wav";
 som_CAIU.src = "./efeitos/caiu.wav";
+som_PONTO.src = "./efeitos/ponto.wav";
+som_PULO.src = "./efeitos/pulo.wav";
 
 const sprites = new Image();
 sprites.src = "./sprites.png";
@@ -321,11 +325,23 @@ function criaPlacar() {
       contexto.fillText(`${placar.pontuacao}`, canvas.width - 67, 149);
     },
     atualiza() {
-      const intervaloDeFrames = 20;
-      const passouOIntervalo = frames % intervaloDeFrames === 0;
+      let flappyBirdX = globais.flappyBird.x;
+      let canoX;
 
-      if (passouOIntervalo) {
+      switch (globais.canos.pares.length) {
+        case 0:
+          return;
+        case 1:
+          canoX = globais.canos.pares[0].x;
+          break;
+        case 2:
+          canoX = Math.min(globais.canos.pares[0].x, globais.canos.pares[1].x);
+      }
+
+      if (flappyBirdX === canoX) {
         placar.pontuacao = placar.pontuacao + 1;
+
+        som_PONTO.play();
       }
     },
   };
@@ -409,11 +425,18 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-window.addEventListener("click", () => telaAtiva.click && telaAtiva.click());
-window.addEventListener(
-  "keydown",
-  (e) => telaAtiva.click && !e.repeat && e.code === "Space" && telaAtiva.click()
-);
+window.addEventListener("click", () => {
+  if (telaAtiva.click) {
+    som_PULO.play();
+    telaAtiva.click();
+  }
+});
+window.addEventListener("keydown", (e) => {
+  if (telaAtiva.click && !e.repeat && e.code === "Space") {
+    som_PULO.play();
+    telaAtiva.click();
+  }
+});
 
 mudaParaTela(Telas.INICIO);
 loop();
