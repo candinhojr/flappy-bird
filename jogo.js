@@ -339,7 +339,23 @@ function criaPlacar() {
       contexto.fillText(`${placarSalvo ?? 0}`, canvas.width - 67, 191);
     },
     atualiza() {
-      if (globais.flappyBird.x === globais.canos.pares[0].fimCano) {
+      let flappyBirdX = globais.flappyBird.x;
+      let canoX;
+
+      switch (globais.canos.pares.length) {
+        case 0:
+          return;
+        case 1:
+          canoX = globais.canos.pares[0].fimCano;
+          break;
+        case 2:
+          canoX = Math.min(
+            globais.canos.pares[0].fimCano,
+            globais.canos.pares[1].fimCano
+          );
+      }
+
+      if (flappyBirdX === canoX) {
         placar.pontuacao = placar.pontuacao + 1;
 
         som_PONTO.play();
