@@ -212,6 +212,44 @@ const mensagemGameOver = {
   },
 };
 
+const moeda = {
+  sX: 0,
+  sY: 78,
+  w: 44,
+  h: 44,
+  x: canvas.width / 2 - 87,
+  y: 136,
+  moedas: [
+    { spriteX: 48, spriteY: 78 }, // moeda de lata
+    { spriteX: 48, spriteY: 124 }, // moeda de bronze
+    { spriteX: 0, spriteY: 78 }, // moeda de prata
+    { spriteX: 0, spriteY: 124 }, // moeda de ouro
+  ],
+  moedaSelecionada: 0,
+  calculaMoeda() {
+    const pontuacao = globais.placar.pontuacao;
+    if (pontuacao >= 15) moeda.moedaSelecionada = 3;
+    else if (pontuacao >= 10) moeda.moedaSelecionada = 2;
+    else if (pontuacao >= 5) moeda.moedaSelecionada = 1;
+    else moeda.moedaSelecionada = 0;
+  },
+  desenha() {
+    moeda.calculaMoeda();
+    const { spriteX, spriteY } = moeda.moedas[moeda.moedaSelecionada];
+    contexto.drawImage(
+      sprites,
+      spriteX,
+      spriteY,
+      moeda.w,
+      moeda.h,
+      moeda.x,
+      moeda.y,
+      moeda.w,
+      moeda.h
+    );
+  },
+};
+
 function criaCanos() {
   const canos = {
     largura: 52,
@@ -403,6 +441,7 @@ const Telas = {
 Telas.GAME_OVER = {
   desenha() {
     mensagemGameOver.desenha();
+    moeda.desenha();
     globais.placar.desenhaPlacarFinal();
     globais.placar.desenhaMelhorPlacar();
   },
