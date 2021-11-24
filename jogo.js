@@ -120,6 +120,7 @@ function criaFlappyBird() {
     velocidade: 0,
     pula() {
       flappyBird.velocidade = -flappyBird.pulo;
+      som_PULO.play();
     },
     atualiza() {
       if (fazColisao(flappyBird, globais.chao)) {
@@ -425,18 +426,11 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-window.addEventListener("click", () => {
-  if (telaAtiva.click) {
-    som_PULO.play();
-    telaAtiva.click();
-  }
-});
-window.addEventListener("keydown", (e) => {
-  if (telaAtiva.click && !e.repeat && e.code === "Space") {
-    som_PULO.play();
-    telaAtiva.click();
-  }
-});
+window.addEventListener("click", () => telaAtiva.click && telaAtiva.click());
+window.addEventListener(
+  "keydown",
+  (e) => telaAtiva.click && !e.repeat && e.code === "Space" && telaAtiva.click()
+);
 
 mudaParaTela(Telas.INICIO);
 loop();
