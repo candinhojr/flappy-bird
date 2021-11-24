@@ -320,10 +320,21 @@ function criaPlacar() {
       contexto.fillText(`${placar.pontuacao}`, canvas.width - 10, 35);
     },
     desenhaPlacarFinal() {
+      const placarSalvo = localStorage.getItem("melhorPlacar");
+      if (placar.pontuacao > placarSalvo)
+        localStorage.setItem("melhorPlacar", placar.pontuacao);
+
       contexto.font = '20px "Press Start 2P"';
       contexto.textAlign = "right";
       contexto.fillStyle = "black";
       contexto.fillText(`${placar.pontuacao}`, canvas.width - 67, 149);
+    },
+    desenhaMelhorPlacar() {
+      const placarSalvo = localStorage.getItem("melhorPlacar");
+      contexto.font = '20px "Press Start 2P"';
+      contexto.textAlign = "right";
+      contexto.fillStyle = "black";
+      contexto.fillText(`${placarSalvo ?? 0}`, canvas.width - 67, 191);
     },
     atualiza() {
       let flappyBirdX = globais.flappyBird.x;
@@ -388,6 +399,7 @@ Telas.GAME_OVER = {
   desenha() {
     mensagemGameOver.desenha();
     globais.placar.desenhaPlacarFinal();
+    globais.placar.desenhaMelhorPlacar();
   },
   click() {
     mudaParaTela(Telas.INICIO);
