@@ -291,10 +291,12 @@ function criaCanos() {
         canos.pares.push({
           x: canvas.width,
           y: -150 * (Math.random() + 1),
+          fimCano: canvas.width,
         });
       }
       canos.pares.forEach(function (par) {
         par.x = par.x - 2;
+        par.fimCano = par.x + 52;
 
         if (canos.temColisaoComOFlappyBird(par)) {
           som_HIT.play();
@@ -337,20 +339,7 @@ function criaPlacar() {
       contexto.fillText(`${placarSalvo ?? 0}`, canvas.width - 67, 191);
     },
     atualiza() {
-      let flappyBirdX = globais.flappyBird.x;
-      let canoX;
-
-      switch (globais.canos.pares.length) {
-        case 0:
-          return;
-        case 1:
-          canoX = globais.canos.pares[0].x;
-          break;
-        case 2:
-          canoX = Math.min(globais.canos.pares[0].x, globais.canos.pares[1].x);
-      }
-
-      if (flappyBirdX === canoX) {
+      if (globais.flappyBird.x === globais.canos.pares[0].fimCano) {
         placar.pontuacao = placar.pontuacao + 1;
 
         som_PONTO.play();
